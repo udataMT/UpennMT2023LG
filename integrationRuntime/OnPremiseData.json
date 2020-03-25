@@ -1,0 +1,6 @@
+{
+	"name": "OnPremiseData",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

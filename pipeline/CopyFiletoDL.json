@@ -1,0 +1,61 @@
+{
+	"name": "CopyFiletoDL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy_7w9",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "."
+					},
+					{
+						"name": "Destination",
+						"value": "invoices//Quotas"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT  [PayeeID]\r\n      ,[PayeeName]\r\n      ,[SalesCategory]\r\n      ,[StartDate]\r\n      ,[EndDate]\r\n      ,[Quota]\r\n   FROM [UDT_DW].[dbo].[UDT_DW_Cognos_QuotaBySalesRep]"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "SourceDataset_7w9",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DestinationDataset_7w9",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
