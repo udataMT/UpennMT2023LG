@@ -1,0 +1,77 @@
+{
+	"name": "AzureInvoiceLine",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azureserverdf",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "InvoiceID",
+				"type": "varchar"
+			},
+			{
+				"name": "ItemID",
+				"type": "varchar"
+			},
+			{
+				"name": "ItemShortDescription",
+				"type": "varchar"
+			},
+			{
+				"name": "UnitPrice",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "QtyShipped",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ExtAmt",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "UnitCost",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "ExtCost",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "GP",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "ItemClassID",
+				"type": "varchar"
+			},
+			{
+				"name": "SalesCategory",
+				"type": "varchar"
+			},
+			{
+				"name": "InvoiceKey",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "stgUDT_DW_Cognos_InvoiceLine"
+		}
+	}
+}
