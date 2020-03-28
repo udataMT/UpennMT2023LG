@@ -1,0 +1,29 @@
+{
+	"name": "azSalesRepLkp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azureserverdf",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SalesRepID",
+				"type": "varchar"
+			},
+			{
+				"name": "Payeeid",
+				"type": "varchar"
+			},
+			{
+				"name": "SalesRepName",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "UDT_DW_Cognos_SalesReptoPayee"
+		}
+	}
+}
