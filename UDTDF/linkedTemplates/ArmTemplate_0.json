@@ -1,0 +1,1106 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "UDTDF"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
+		"AzureDataLakeStorage2_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage2'"
+		},
+		"az1sqludtedpserver_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'az1sqludtedpserver'"
+		},
+		"azureserverdf_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'azureserverdf'"
+		},
+		"OnPremc2DW_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'OnPremc2DW'"
+		},
+		"OnPremc2DW_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'OnPremc2DW'"
+		},
+		"SqlServer1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SqlServer1'"
+		},
+		"SqlServer1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SqlServer1'"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://storageaccountudt.dfs.core.windows.net"
+		},
+		"AzureDataLakeStorage2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://az1adls2udtedp4lz.dfs.core.windows.net"
+		},
+		"OnPremc2DW_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "UDTNET\\cbrioso"
+		},
+		"SqlServer1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "UDTNET\\cbrioso"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage2')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage2_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage2_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/az1sqludtedpserver')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('az1sqludtedpserver_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azureserverdf')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('azureserverdf_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OnPremiseData')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureInvoiceLine')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azureserverdf",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "InvoiceID",
+						"type": "varchar"
+					},
+					{
+						"name": "ItemID",
+						"type": "varchar"
+					},
+					{
+						"name": "ItemShortDescription",
+						"type": "varchar"
+					},
+					{
+						"name": "UnitPrice",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 3
+					},
+					{
+						"name": "QtyShipped",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ExtAmt",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 3
+					},
+					{
+						"name": "UnitCost",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 3
+					},
+					{
+						"name": "ExtCost",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 3
+					},
+					{
+						"name": "GP",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 3
+					},
+					{
+						"name": "ItemClassID",
+						"type": "varchar"
+					},
+					{
+						"name": "SalesCategory",
+						"type": "varchar"
+					},
+					{
+						"name": "InvoiceKey",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "stgUDT_DW_Cognos_InvoiceLine"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azureserverdf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Azure_InvoiceHeader')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azureserverdf",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "InvoiceKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "InvoiceID",
+						"type": "varchar"
+					},
+					{
+						"name": "CustID",
+						"type": "varchar"
+					},
+					{
+						"name": "CustomerName",
+						"type": "varchar"
+					},
+					{
+						"name": "SalesRepID",
+						"type": "varchar"
+					},
+					{
+						"name": "Region",
+						"type": "varchar"
+					},
+					{
+						"name": "RegionDesc",
+						"type": "varchar"
+					},
+					{
+						"name": "InvoiceDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "PostDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "stgUDT_DW_Cognos_InvoiceHeader"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azureserverdf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_7w9')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Quotas",
+						"fileSystem": "invoices"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azInvoiceHeader')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azureserverdf",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "InvoiceID",
+						"type": "varchar"
+					},
+					{
+						"name": "CustID",
+						"type": "varchar"
+					},
+					{
+						"name": "CustomerName",
+						"type": "varchar"
+					},
+					{
+						"name": "SalesRepID",
+						"type": "varchar"
+					},
+					{
+						"name": "SalesRepName",
+						"type": "varchar"
+					},
+					{
+						"name": "Region",
+						"type": "varchar"
+					},
+					{
+						"name": "RegionDesc",
+						"type": "varchar"
+					},
+					{
+						"name": "InvoiceDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "PostDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "InvoiceKey",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "UDT_DW_Cognos_InvoiceHeader"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azureserverdf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azInvoiceHeaderStg')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azureserverdf",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "InvoiceKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "InvoiceID",
+						"type": "varchar"
+					},
+					{
+						"name": "CustID",
+						"type": "varchar"
+					},
+					{
+						"name": "CustomerName",
+						"type": "varchar"
+					},
+					{
+						"name": "SalesRepID",
+						"type": "varchar"
+					},
+					{
+						"name": "Region",
+						"type": "varchar"
+					},
+					{
+						"name": "RegionDesc",
+						"type": "varchar"
+					},
+					{
+						"name": "InvoiceDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "PostDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "stgUDT_DW_Cognos_InvoiceHeader"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azureserverdf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azSalesRepLkp')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azureserverdf",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SalesRepID",
+						"type": "varchar"
+					},
+					{
+						"name": "Payeeid",
+						"type": "varchar"
+					},
+					{
+						"name": "SalesRepName",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "UDT_DW_Cognos_SalesReptoPayee"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azureserverdf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OnPremc2DW')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('OnPremc2DW_connectionString')]",
+					"userName": "[parameters('OnPremc2DW_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('OnPremc2DW_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "OnPremiseData",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/OnPremiseData')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlServer1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('SqlServer1_connectionString')]",
+					"userName": "[parameters('SqlServer1_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('SqlServer1_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "OnPremiseData",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/OnPremiseData')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OnPremInvoiceHeader')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OnPremc2DW",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "InvoiceID",
+						"type": "varchar"
+					},
+					{
+						"name": "CustID",
+						"type": "varchar"
+					},
+					{
+						"name": "CustomerName",
+						"type": "varchar"
+					},
+					{
+						"name": "SalesRepID",
+						"type": "varchar"
+					},
+					{
+						"name": "SalesRepName",
+						"type": "varchar"
+					},
+					{
+						"name": "Region",
+						"type": "varchar"
+					},
+					{
+						"name": "RegionDesc",
+						"type": "varchar"
+					},
+					{
+						"name": "InvoiceDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "PostDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "InvoiceKey",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "UDT_DW_Cognos_InvoiceHeader"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/OnPremc2DW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OnPremInvoiceLines')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OnPremc2DW",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "InvoiceID",
+						"type": "varchar"
+					},
+					{
+						"name": "ItemID",
+						"type": "varchar"
+					},
+					{
+						"name": "ItemShortDescription",
+						"type": "varchar"
+					},
+					{
+						"name": "UnitPrice",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 3
+					},
+					{
+						"name": "QtyShipped",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ExtAmt",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 3
+					},
+					{
+						"name": "UnitCost",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 3
+					},
+					{
+						"name": "ExtCost",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 3
+					},
+					{
+						"name": "GP",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 3
+					},
+					{
+						"name": "ItemClassID",
+						"type": "varchar"
+					},
+					{
+						"name": "SalesCategory",
+						"type": "varchar"
+					},
+					{
+						"name": "InvoiceKey",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "UDT_DW_Cognos_InvoiceLine"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/OnPremc2DW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_InvoiceHeaderFromStg')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "azInvoiceHeaderStg",
+								"type": "DatasetReference"
+							},
+							"name": "InvoiceHeaderStg"
+						},
+						{
+							"dataset": {
+								"referenceName": "azSalesRepLkp",
+								"type": "DatasetReference"
+							},
+							"name": "SalesRepLkp"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "azInvoiceHeader",
+								"type": "DatasetReference"
+							},
+							"name": "InsertintoInvoiceHeader"
+						}
+					],
+					"transformations": [
+						{
+							"name": "LkpSalesRepName"
+						},
+						{
+							"name": "OnlyNeededColumns"
+						}
+					],
+					"script": "source(output(\n\t\tInvoiceKey as integer,\n\t\tInvoiceID as string,\n\t\tCustID as string,\n\t\tCustomerName as string,\n\t\tSalesRepID as string,\n\t\tRegion as string,\n\t\tRegionDesc as string,\n\t\tInvoiceDate as timestamp,\n\t\tPostDate as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> InvoiceHeaderStg\nsource(output(\n\t\tSalesRepID as string,\n\t\tPayeeid as string,\n\t\tSalesRepName as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> SalesRepLkp\nInvoiceHeaderStg, SalesRepLkp lookup(InvoiceHeaderStg@SalesRepID == SalesRepLkp@SalesRepID,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'none')~> LkpSalesRepName\nLkpSalesRepName select(mapColumn(\n\t\tInvoiceKey,\n\t\tInvoiceID,\n\t\tCustID,\n\t\tCustomerName,\n\t\tSalesRepID = InvoiceHeaderStg@SalesRepID,\n\t\tRegion,\n\t\tRegionDesc,\n\t\tInvoiceDate,\n\t\tPostDate,\n\t\tSalesRepName\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> OnlyNeededColumns\nOnlyNeededColumns sink(input(\n\t\tInvoiceID as string,\n\t\tCustID as string,\n\t\tCustomerName as string,\n\t\tSalesRepID as string,\n\t\tSalesRepName as string,\n\t\tRegion as string,\n\t\tRegionDesc as string,\n\t\tInvoiceDate as timestamp,\n\t\tPostDate as timestamp,\n\t\tInvoiceKey as integer\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tmapColumn(\n\t\tInvoiceID,\n\t\tCustID,\n\t\tCustomerName,\n\t\tSalesRepID,\n\t\tSalesRepName,\n\t\tRegion,\n\t\tRegionDesc,\n\t\tInvoiceDate,\n\t\tPostDate,\n\t\tInvoiceKey\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> InsertintoInvoiceHeader"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/azInvoiceHeaderStg')]",
+				"[concat(variables('factoryId'), '/datasets/azSalesRepLkp')]",
+				"[concat(variables('factoryId'), '/datasets/azInvoiceHeader')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyFiletoDL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy_7w9",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "."
+							},
+							{
+								"name": "Destination",
+								"value": "invoices//Quotas"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT  [PayeeID]\r\n      ,[PayeeName]\r\n      ,[SalesCategory]\r\n      ,[StartDate]\r\n      ,[EndDate]\r\n      ,[Quota]\r\n   FROM [UDT_DW].[dbo].[UDT_DW_Cognos_QuotaBySalesRep]"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "OnPremInvoiceHeader",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_7w9",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/OnPremInvoiceHeader')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_7w9')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyInvoiceforCognosfromPremtoAzure')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy InvoiceHeader",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE stgUDT_DW_Cognos_InvoiceHeader",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "InvoiceKey",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "InvoiceKey",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "InvoiceID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "InvoiceID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CustID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CustID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CustomerName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SalesRepID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SalesRepID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Region",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Region",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "RegionDesc",
+											"type": "String"
+										},
+										"sink": {
+											"name": "RegionDesc",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "InvoiceDate",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "InvoiceDate",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "PostDate",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "PostDate",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "OnPremInvoiceHeader",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Azure_InvoiceHeader",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy Invoice Lines",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy InvoiceHeader",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE stgUDT_DW_Cognos_InvoiceLine",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "InvoiceID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "InvoiceID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ItemID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ItemID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ItemShortDescription",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ItemShortDescription",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "UnitPrice",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "UnitPrice",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "QtyShipped",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "QtyShipped",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "ExtAmt",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "ExtAmt",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "UnitCost",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "UnitCost",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "ExtCost",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "ExtCost",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "GP",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "GP",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "ItemClassID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ItemClassID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SalesCategory",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SalesCategory",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "InvoiceKey",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "InvoiceKey",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "OnPremInvoiceLines",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureInvoiceLine",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/OnPremInvoiceHeader')]",
+				"[concat(variables('factoryId'), '/datasets/Azure_InvoiceHeader')]",
+				"[concat(variables('factoryId'), '/datasets/OnPremInvoiceLines')]",
+				"[concat(variables('factoryId'), '/datasets/AzureInvoiceLine')]"
+			]
+		}
+	]
+}

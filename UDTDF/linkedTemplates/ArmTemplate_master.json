@@ -1,0 +1,126 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "UDTDF"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
+		"AzureDataLakeStorage2_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage2'"
+		},
+		"OnPremc2DW_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'OnPremc2DW'"
+		},
+		"OnPremc2DW_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'OnPremc2DW'"
+		},
+		"SqlServer1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SqlServer1'"
+		},
+		"SqlServer1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SqlServer1'"
+		},
+		"az1sqludtedpserver_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'az1sqludtedpserver'"
+		},
+		"azureserverdf_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'azureserverdf'"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://storageaccountudt.dfs.core.windows.net"
+		},
+		"AzureDataLakeStorage2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://az1adls2udtedp4lz.dfs.core.windows.net"
+		},
+		"OnPremc2DW_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "UDTNET\\cbrioso"
+		},
+		"SqlServer1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "UDTNET\\cbrioso"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureDataLakeStorage1_accountKey": {
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					},
+					"AzureDataLakeStorage2_accountKey": {
+						"value": "[parameters('AzureDataLakeStorage2_accountKey')]"
+					},
+					"az1sqludtedpserver_connectionString": {
+						"value": "[parameters('az1sqludtedpserver_connectionString')]"
+					},
+					"azureserverdf_connectionString": {
+						"value": "[parameters('azureserverdf_connectionString')]"
+					},
+					"OnPremc2DW_connectionString": {
+						"value": "[parameters('OnPremc2DW_connectionString')]"
+					},
+					"OnPremc2DW_password": {
+						"value": "[parameters('OnPremc2DW_password')]"
+					},
+					"SqlServer1_connectionString": {
+						"value": "[parameters('SqlServer1_connectionString')]"
+					},
+					"SqlServer1_password": {
+						"value": "[parameters('SqlServer1_password')]"
+					},
+					"AzureDataLakeStorage1_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
+					},
+					"AzureDataLakeStorage2_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage2_properties_typeProperties_url')]"
+					},
+					"OnPremc2DW_properties_typeProperties_userName": {
+						"value": "[parameters('OnPremc2DW_properties_typeProperties_userName')]"
+					},
+					"SqlServer1_properties_typeProperties_userName": {
+						"value": "[parameters('SqlServer1_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

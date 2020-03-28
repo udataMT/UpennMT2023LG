@@ -1,0 +1,45 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "UDTDF"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage2_accountKey": {
+			"value": ""
+		},
+		"OnPremc2DW_connectionString": {
+			"value": ""
+		},
+		"OnPremc2DW_password": {
+			"value": ""
+		},
+		"SqlServer1_connectionString": {
+			"value": ""
+		},
+		"SqlServer1_password": {
+			"value": ""
+		},
+		"az1sqludtedpserver_connectionString": {
+			"value": ""
+		},
+		"azureserverdf_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://storageaccountudt.dfs.core.windows.net"
+		},
+		"AzureDataLakeStorage2_properties_typeProperties_url": {
+			"value": "https://az1adls2udtedp4lz.dfs.core.windows.net"
+		},
+		"OnPremc2DW_properties_typeProperties_userName": {
+			"value": "UDTNET\\cbrioso"
+		},
+		"SqlServer1_properties_typeProperties_userName": {
+			"value": "UDTNET\\cbrioso"
+		}
+	}
+}
