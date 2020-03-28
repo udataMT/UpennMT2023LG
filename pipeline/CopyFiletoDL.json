@@ -43,7 +43,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "SourceDataset_7w9",
+						"referenceName": "OnPremInvoiceHeader",
 						"type": "DatasetReference"
 					}
 				],

@@ -1,0 +1,309 @@
+{
+	"name": "CopyInvoiceforCognosfromPremtoAzure",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy InvoiceHeader",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE stgUDT_DW_Cognos_InvoiceHeader",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "InvoiceKey",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "InvoiceKey",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "InvoiceID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "InvoiceID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CustID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CustID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CustomerName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SalesRepID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SalesRepID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Region",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Region",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RegionDesc",
+									"type": "String"
+								},
+								"sink": {
+									"name": "RegionDesc",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "InvoiceDate",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "InvoiceDate",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "PostDate",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "PostDate",
+									"type": "DateTime"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "OnPremInvoiceHeader",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Azure_InvoiceHeader",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy Invoice Lines",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy InvoiceHeader",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE stgUDT_DW_Cognos_InvoiceLine",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "InvoiceID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "InvoiceID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ItemID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ItemID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ItemShortDescription",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ItemShortDescription",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "UnitPrice",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "UnitPrice",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "QtyShipped",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "QtyShipped",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "ExtAmt",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "ExtAmt",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "UnitCost",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "UnitCost",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "ExtCost",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "ExtCost",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "GP",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "GP",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "ItemClassID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ItemClassID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SalesCategory",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SalesCategory",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "InvoiceKey",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "InvoiceKey",
+									"type": "Int32"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "OnPremInvoiceLines",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AzureInvoiceLine",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}

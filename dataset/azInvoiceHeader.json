@@ -1,12 +1,12 @@
 {
-	"name": "OnPremInvoiceHeader",
+	"name": "azInvoiceHeader",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "OnPremc2DW",
+			"referenceName": "azureserverdf",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
-		"type": "SqlServerTable",
+		"type": "AzureSqlTable",
 		"schema": [
 			{
 				"name": "InvoiceID",
@@ -58,6 +58,5 @@
 			"schema": "dbo",
 			"table": "UDT_DW_Cognos_InvoiceHeader"
 		}
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }

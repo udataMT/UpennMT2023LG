@@ -1,0 +1,42 @@
+{
+	"name": "df_InvoiceHeaderFromStg",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "azInvoiceHeaderStg",
+						"type": "DatasetReference"
+					},
+					"name": "InvoiceHeaderStg"
+				},
+				{
+					"dataset": {
+						"referenceName": "azSalesRepLkp",
+						"type": "DatasetReference"
+					},
+					"name": "SalesRepLkp"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "azInvoiceHeader",
+						"type": "DatasetReference"
+					},
+					"name": "InsertintoInvoiceHeader"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LkpSalesRepName"
+				},
+				{
+					"name": "OnlyNeededColumns"
+				}
+			],
+			"script": "source(output(\n\t\tInvoiceKey as integer,\n\t\tInvoiceID as string,\n\t\tCustID as string,\n\t\tCustomerName as string,\n\t\tSalesRepID as string,\n\t\tRegion as string,\n\t\tRegionDesc as string,\n\t\tInvoiceDate as timestamp,\n\t\tPostDate as timestamp\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> InvoiceHeaderStg\nsource(output(\n\t\tSalesRepID as string,\n\t\tPayeeid as string,\n\t\tSalesRepName as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> SalesRepLkp\nInvoiceHeaderStg, SalesRepLkp lookup(InvoiceHeaderStg@SalesRepID == SalesRepLkp@SalesRepID,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'none')~> LkpSalesRepName\nLkpSalesRepName select(mapColumn(\n\t\tInvoiceKey,\n\t\tInvoiceID,\n\t\tCustID,\n\t\tCustomerName,\n\t\tSalesRepID = InvoiceHeaderStg@SalesRepID,\n\t\tRegion,\n\t\tRegionDesc,\n\t\tInvoiceDate,\n\t\tPostDate,\n\t\tSalesRepName\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> OnlyNeededColumns\nOnlyNeededColumns sink(input(\n\t\tInvoiceID as string,\n\t\tCustID as string,\n\t\tCustomerName as string,\n\t\tSalesRepID as string,\n\t\tSalesRepName as string,\n\t\tRegion as string,\n\t\tRegionDesc as string,\n\t\tInvoiceDate as timestamp,\n\t\tPostDate as timestamp,\n\t\tInvoiceKey as integer\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: true,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tmapColumn(\n\t\tInvoiceID,\n\t\tCustID,\n\t\tCustomerName,\n\t\tSalesRepID,\n\t\tSalesRepName,\n\t\tRegion,\n\t\tRegionDesc,\n\t\tInvoiceDate,\n\t\tPostDate,\n\t\tInvoiceKey\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> InsertintoInvoiceHeader"
+		}
+	}
+}

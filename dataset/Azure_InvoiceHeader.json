@@ -1,13 +1,18 @@
 {
-	"name": "OnPremInvoiceHeader",
+	"name": "Azure_InvoiceHeader",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "OnPremc2DW",
+			"referenceName": "azureserverdf",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
-		"type": "SqlServerTable",
+		"type": "AzureSqlTable",
 		"schema": [
+			{
+				"name": "InvoiceKey",
+				"type": "int",
+				"precision": 10
+			},
 			{
 				"name": "InvoiceID",
 				"type": "varchar"
@@ -22,10 +27,6 @@
 			},
 			{
 				"name": "SalesRepID",
-				"type": "varchar"
-			},
-			{
-				"name": "SalesRepName",
 				"type": "varchar"
 			},
 			{
@@ -47,17 +48,11 @@
 				"type": "datetime",
 				"precision": 23,
 				"scale": 3
-			},
-			{
-				"name": "InvoiceKey",
-				"type": "int",
-				"precision": 10
 			}
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "UDT_DW_Cognos_InvoiceHeader"
+			"table": "stgUDT_DW_Cognos_InvoiceHeader"
 		}
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }
